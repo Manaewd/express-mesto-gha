@@ -3,7 +3,7 @@ const Card = require('../models/card');
 const { ERROR_INCORRECT_DATA, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../utils/utils');
 
 const getCards = (req, res) => {
-  Card.find({}).then((card) => res.status(200).send(card))
+  Card.find({}).then((cards) => res.status(200).send(cards))
     .catch((err) => res.status(ERROR_DEFAULT).send({
       message: 'Произошла ошибка',
       err: err.message,
@@ -13,22 +13,22 @@ const getCards = (req, res) => {
 
 const createCard = (req, res) => {
   const { name, link } = req.body;
-
-  Card.create({
-    name, link, owner: req.user._id,
-  }).then((card) => res.status(201).send(card)).catch((err) => {
-    if (err.message.includes('validation failed')) {
-      res.status(ERROR_INCORRECT_DATA).send({
-        message: 'Вы ввели некоректные данные',
-      });
-    } else {
-      res.status(ERROR_DEFAULT).send({
-        message: 'Произошла ошибка',
-        err: err.message,
-        stack: err.stack,
-      });
-    }
-  });
+  const owner = req.user._id;
+  
+  Card.create({ name, link, owner })
+    .then((card) => res.status(201).send(card))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(ERROR_INCORRECT_DATA)
+          .send(err);
+      } else {
+        res.status(ERROR_DEFAULT).send({
+          message: 'Произошла ошибка',
+          err: err.message,
+          stack: err.stack,
+        });
+      }
+    });
 };
 
 const deleteCard = (req, res) => {
@@ -54,7 +54,6 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    .orFail(() => new Error('Card not found'))
     .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err.message === 'Card not found') {
