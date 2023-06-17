@@ -10,6 +10,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
 });
 
 app.use(express.json());
+app.use(router);
 
 app.use((req, res, next) => {
   req.user = {
@@ -18,12 +19,6 @@ app.use((req, res, next) => {
 
   next();
 });
-
-app.get('*', (req, res) => {
-  res.status(404).send({ message: 'Not found' });
-});
-
-app.use(router);
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console

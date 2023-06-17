@@ -23,9 +23,16 @@ const getUserById = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  User.create(req.body)
+  const { name, about, avatar } = req.body;
+
+  User.create({ name, about, avatar })
     .then((user) => res.status(201).send(user))
-    .catch((err) => res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка', err: err.message, stack: err.stack }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные при создании пользователя' });
+      }
+      return res.status(ERROR_DEFAULT).send({ message: err.message });
+    });
 };
 
 const updateUserProfile = (req, res) => {
@@ -36,16 +43,15 @@ const updateUserProfile = (req, res) => {
     new: true,
     runValidators: true,
   })
-    .orFail(() => new Error('User Not found'))
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
-      if (err.message === 'Not found') {
-        res.status(ERROR_NOT_FOUND).send({ message: `Пользователь по указанному id:${_id} не найден` });
-      } else if (err.name === 'CastError') {
-        res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные при создании пользователя' })
-      } else {
-        res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка', err: err.message, stack: err.stack });
+      if (err.name === 'ValidationError') {
+        return res.status(ERROR_INCORRECT_DATA)
+          .send({ message: 'Переданы некорректные данные при создании пользователя' });
+      } if (err.name === 'CastError') {
+        return res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь по указанному id не найден' });
       }
+      return res.status(ERROR_DEFAULT).send({ message: err.message });
     });
 };
 
@@ -57,16 +63,17 @@ const updateUserAvatar = (req, res) => {
     new: true,
     runValidators: true,
   })
-    .orFail(() => new Error('User Not found'))
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
-      if (err.message === 'Not found') {
-        res.status(ERROR_NOT_FOUND).send({ message: `Пользователь по указанному id:${_id} не найден` });
-      } else if (err.name === 'CastError') {
-        res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные при создании пользователя' })
-      } else {
-        res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка', err: err.message, stack: err.stack });
+      if (err.name === 'CastError') {
+        return res.status(ERROR_NOT_FOUND)
+          .send({ message: 'Пользователь по указанному id не найден' });
       }
+      if (err.name === 'ValidationError') {
+        return res.status(ERROR_INCORRECT_DATA)
+          .send({ message: 'Переданы некорректные данные при создании пользователя' });
+      }
+      return res.status(ERROR_DEFAULT).send({ message: err.message });
     });
 };
 
