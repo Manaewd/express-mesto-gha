@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const routes = require('./routes');
-const { ERROR_NOT_FOUND } = require('./utils/utils');
 
 const app = express();
 const { PORT = 3000 } = process.env;
@@ -21,10 +20,6 @@ app.use((req, res, next) => {
 });
 
 app.use(routes);
-
-app.use((req, res) => {
-  res.status(ERROR_NOT_FOUND).send({ message: 'Что-то пошло не так' });
-});
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
