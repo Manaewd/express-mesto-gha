@@ -9,13 +9,15 @@ const getUsers = (req, res) => {
 };
 
 const getUserById = (req, res) => {
-  const { id } = req.params;
-  User.findById(id)
-    .orFail(() => new Error('Not found'))
+  const { userId } = req.params;
+  User.findById(userId)
+    .orFail(new Error('User not found'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      if (err.message === 'Not found') {
+      if (err.message === 'User not found') {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден' });
+      } else if (err.name === 'CastError') {
+        res.status(ERROR_INCORRECT_DATA).send({ message: `Данные некорректны ${err.message}. Проверьте id пользователя` });
       } else {
         res.status(ERROR_DEFAULT).send({ message: 'Произошла ошибка', err: err.message, stack: err.stack });
       }
