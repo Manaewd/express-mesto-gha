@@ -1,9 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const router = require('./routes');
+const routes = require('./routes');
 
-const { PORT = 3000 } = process.env;
 const app = express();
+const { PORT = 3000 } = process.env;
 
 app.use(express.json());
 
@@ -19,7 +19,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(router);
+app.use(routes);
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
