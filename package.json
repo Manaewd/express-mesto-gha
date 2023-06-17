@@ -6,9 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "lint": "npx eslint .",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "lint": "npx eslint ."
   },
   "keywords": [],
   "author": "Denis Manaev",
@@ -16,7 +14,6 @@
   "devDependencies": {
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.27.5",
-    "gh-pages": "^5.0.0",
     "nodemon": "^2.0.22"
   },
   "dependencies": {
