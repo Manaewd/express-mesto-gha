@@ -29,19 +29,19 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
-    .orFail(() => new Error('Card not found'))
-    .then((card) => res.status(200).send(card))
-    .catch((err) => {
-      if (err.message === 'Card not found') {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
-      } else {
-        res.status(ERROR_DEFAULT).send({
-          message: 'Произошла ошибка',
-          err: err.message,
-          stack: err.stack,
-        });
+  const { cardId } = req.params; 
+  Card.findByIdAndRemove(cardId)
+    .then((card) => {
+      if (!card) {
+        return res.status(ERROR_NOT_FOUND).send({ message: 'Карточка с указанным _id не найдена' });
       }
+      return res.send({ data: card });
+      })
+      .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные для удаления карточки' });
+      }
+      return res.status(ERROR_DEFAULT).send({ message: err.message });
     });
 };
 
