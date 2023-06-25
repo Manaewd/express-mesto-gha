@@ -1,5 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+
+const cookieParser = require('cookie-parser');
 const routes = require('./routes');
 
 const app = express();
@@ -19,9 +22,13 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(bodyParser.json()); // входящие запросы переводит в JSON
+app.use(bodyParser.urlencoded({ extende: true })); // для приёма веб-страниц внутри POST-запроса
+app.use(cookieParser()); // подключаем парсер cookie (для извлечения данных из куков)
+
 app.use(routes);
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
-  console.log('Слушаю порт 3000');
+  console.log('Ок');
 });
