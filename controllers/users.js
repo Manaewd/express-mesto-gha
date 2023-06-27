@@ -35,8 +35,7 @@ const createUser = (req, res, next) => {
       User.create({
         name, about, avatar, email, password: hash,
       })
-        .then((user) => res.status(201).send({ data: user.toJSON() }
-        ))
+        .then((user) => res.status(201).send({ data: user.toJSON() }))
         .catch(next);
     })
     .catch(next);
@@ -92,6 +91,16 @@ const updateUserAvatar = (req, res) => {
     });
 };
 
+const getUserInfo = (req, res, next) => {
+  const { _id } = req.user;
+
+  User.findById(_id)
+    .then((user) => {
+      res.status(200).send({ data: user });
+    })
+    .catch(next);
+};
+
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
@@ -104,9 +113,9 @@ const login = (req, res, next) => {
           if (isValidUser) {
             const jwt = jsonWebToken.sign({
               _id: user._id,
-            }, 'SECRET');
+            }, process.env.JWT_SECRET);
             res.cookie('jwt', jwt, {
-              maxAge: 360000,
+              maxAge: 360000 * 24 * 7,
               httpOnly: true,
               sameSite: true,
             });
@@ -126,5 +135,6 @@ module.exports = {
   createUser,
   updateUserProfile,
   updateUserAvatar,
+  getUserInfo,
   login,
 };
