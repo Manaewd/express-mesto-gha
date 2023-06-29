@@ -125,7 +125,14 @@ const login = (req, res, next) => {
           }
         });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.message === 'User not found') {
+        next(new AuthError('Ошибка авторизации'));
+      } else if (err.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные введены'));
+      }
+      next(err);
+    });
 };
 
 module.exports = {
