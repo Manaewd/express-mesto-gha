@@ -33,14 +33,15 @@ const createUser = (req, res, next) => {
       })
         .then((user) => res.status(201).send({ data: user.toJSON() }))
         .catch((err) => {
-          if (err.code === 11000) {
+          if (err.name === 'ValidationError') {
+            next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+          } else if (err.code === 11000) {
             next(new AuthDataError('Пользователь с таким email уже существует'));
           } else {
             next(err);
           }
         });
-    })
-    .catch(next);
+    });
 };
 
 const updateUserProfile = (req, res, next) => {
@@ -82,8 +83,9 @@ const updateUserAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Некорректные данные при обновлении'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -109,7 +111,7 @@ const login = (req, res, next) => {
           if (isValidUser) {
             const jwt = jsonWebToken.sign({
               _id: user._id,
-            }, process.env.JWT_SECRET);
+            }, 'JWT_SECRET');
 
             res.cookie('jwt', jwt, {
               maxAge: 360000 * 24 * 7,

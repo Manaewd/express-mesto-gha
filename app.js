@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 const cookieParser = require('cookie-parser');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const { errors } = require('celebrate');
 const routes = require('./routes');
 const errorHandler = require('./errors/error-handler');
 
@@ -21,6 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // для приёма ве�
 app.use(cookieParser()); // подключаем парсер cookie (для извлечения данных из куков)
 
 app.use(routes);
+app.use(errors());
 
 app.use(errorHandler);
 

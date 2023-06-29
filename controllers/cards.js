@@ -19,7 +19,7 @@ const createCard = (req, res, next) => {
     .then((card) => res.status(201).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при создании пользователя'))
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
       } else {
         next(err);
       }
@@ -32,7 +32,7 @@ const deleteCard = (req, res, next) => {
     .orFail(new NotFoundError('Передан несуществующий _id карточки'))
     .then((card) => {
       if (card.owner.toString() !== req.user._id) {
-        return Promise.reject(new ForbiddenError('Нельзя удалять чужие карточки'))
+        return Promise.reject(new ForbiddenError('Нельзя удалять чужие карточки'));
       }
       return Card.deleteOne(card)
         .then(() => res.send({ message: 'Карточка удалена' }));

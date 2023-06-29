@@ -28,15 +28,15 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true,
     required: [true, 'Обязательно для заполненения'],
+    validate: {
+      validator: (v) => validator.isEmail(v),
+      message: 'Некорректный адрес почты',
+    },
   },
   password: {
     type: String,
     select: false,
     required: [true, 'Обязательно для заполненения'],
-    validate: {
-      validator: (v) => validator.isEmail(v),
-      message: 'Некорректный адрес почты',
-    },
   },
 }, { versionKey: false });
 
