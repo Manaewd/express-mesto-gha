@@ -9,7 +9,7 @@ const AuthDataError = require('../errors/auth-data-error');
 const AuthError = require('../errors/auth-error');
 
 const getUsers = (req, res, next) => {
-  User.find({})
+  User.find()
     .then((users) => res.send({ data: users }))
     .catch(next);
 };
