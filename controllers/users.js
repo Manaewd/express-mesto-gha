@@ -10,7 +10,19 @@ const AuthError = require('../errors/auth-error');
 
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.status(200).send(users))
+    .then((users) => res.status(200).send({ data: users }))
+    .catch(next);
+};
+
+const getUserInfo = (req, res, next) => {
+  const { userId } = req.params;
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        return next(new NotFoundError('Пользователь не найден'));
+      }
+      return res.status(200).send({ data: user });
+    })
     .catch(next);
 };
 
@@ -90,17 +102,6 @@ const updateUserAvatar = (req, res, next) => {
         next(err);
       }
     });
-};
-
-const getUserInfo = (req, res, next) => {
-  User.findById(req.params._id)
-    .then((user) => {
-      if (!user) {
-        return next(new NotFoundError('Пользователь не найден'));
-      }
-      return res.status(200).send({ data: user });
-    })
-    .catch(next);
 };
 
 const login = (req, res, next) => {
