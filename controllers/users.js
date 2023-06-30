@@ -15,8 +15,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getUserById = (req, res, next) => {
-  const { userId } = req.params;
-  User.findById(userId)
+  User.findById(req.params.userId || req.user._id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь с указанным _id не найден');
@@ -94,9 +93,7 @@ const updateUserAvatar = (req, res, next) => {
 };
 
 const getUserInfo = (req, res, next) => {
-  const { _id } = req.user;
-
-  User.findById(_id)
+  User.findById(req.params._id)
     .then((user) => {
       if (!user) {
         return next(new NotFoundError('Пользователь не найден'));
