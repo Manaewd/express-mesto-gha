@@ -10,18 +10,15 @@ const AuthError = require('../errors/auth-error');
 
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.status(200).send({ data: users }))
+    .then((users) => res.send({ data: users }))
     .catch(next);
 };
 
 const getUserInfo = (req, res, next) => {
-  const { userId } = req.params;
-  User.findById(userId)
+  const { _id } = req.user;
+  User.findById(_id)
     .then((user) => {
-      if (!user) {
-        return next(new NotFoundError('Пользователь не найден'));
-      }
-      return res.status(200).send({ data: user });
+      res.status(200).send({ data: user });
     })
     .catch(next);
 };
