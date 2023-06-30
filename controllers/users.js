@@ -17,8 +17,12 @@ const getUsers = (req, res, next) => {
 const getUserById = (req, res, next) => {
   const { userId } = req.params;
   User.findById(userId)
-    .orFail(() => new NotFoundError('Пользователь по указанному id не найден'))
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь с указанным _id не найден');
+      }
+      return res.status(200).send({ data: user })
+    })
     .catch(next);
 };
 
@@ -94,7 +98,10 @@ const getUserInfo = (req, res, next) => {
 
   User.findById(_id)
     .then((user) => {
-      res.status(200).send({ data: user });
+      if (!user) {
+        return next(new NotFoundError('Пользователь не найден'));
+      }
+      return res.status(200).send({ data: user });
     })
     .catch(next);
 };

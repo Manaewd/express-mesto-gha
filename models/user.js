@@ -6,19 +6,19 @@ const validator = require('validator');
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    default: 'Жак-Ив Кусто',
     minlength: [2, 'Слишком короткое имя'],
     maxlength: [30, 'Слишком длинное имя'],
+    default: 'Жак-Ив Кусто',
   },
   about: {
-    default: 'Исследователь',
     type: String,
     minlength: [2, 'Слишком мало символов'],
     maxlength: [30, 'Слишком много символов'],
+    default: 'Исследователь',
   },
   avatar: {
-    default: 'https://kadet39.ru/wp-content/uploads/5/e/c/5ec1d3e5e54b8560c3a21e3c0aa24f77.jpeg',
     type: String,
+    default: 'https://kadet39.ru/wp-content/uploads/5/e/c/5ec1d3e5e54b8560c3a21e3c0aa24f77.jpeg',
     validate: {
       validator: (v) => validator.isURL(v),
       message: 'Некорректный URL',
@@ -35,8 +35,8 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    select: false,
     required: [true, 'Обязательно для заполненения'],
+    select: false,
   },
 }, { versionKey: false });
 
