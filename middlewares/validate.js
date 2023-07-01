@@ -1,5 +1,3 @@
-/* eslint-disable linebreak-style */
-// eslint-disable-next-line import/no-extraneous-dependencies
 const { celebrate, Joi } = require('celebrate');
 
 const REGEX = /(https?:\/\/)(www)?([a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=])*#?$/;
@@ -30,7 +28,7 @@ module.exports.validationUpdateUser = celebrate({
 
 module.exports.validationUpdateAvatarUser = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().pattern(REGEX),
+    avatar: Joi.string().required().pattern(REGEX),
   }),
 });
 

@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 const router = require('express').Router();
 const { validateUserID, validationUpdateUser, validationUpdateAvatarUser } = require('../middlewares/validate');
 const {

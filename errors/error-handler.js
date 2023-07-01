@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 const errorHandler = (err, req, res, next) => {
   const { statusCode = 500, message } = err;
 
@@ -8,6 +7,7 @@ const errorHandler = (err, req, res, next) => {
         ? 'На сервере произошла ошибка'
         : message,
     });
+
   next();
 };
 

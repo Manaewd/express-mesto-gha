@@ -1,6 +1,4 @@
-/* eslint-disable linebreak-style */
 const Card = require('../models/card');
-
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 const ForbiddenError = require('../errors/forbidden-error');
