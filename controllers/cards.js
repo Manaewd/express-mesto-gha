@@ -1,6 +1,4 @@
-/* eslint-disable linebreak-style */
 const Card = require('../models/card');
-
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 const ForbiddenError = require('../errors/forbidden-error');
@@ -34,7 +32,7 @@ const deleteCard = (req, res, next) => {
       if (card.owner.toString() !== req.user._id) {
         return Promise.reject(new ForbiddenError('Нельзя удалять чужие карточки'));
       }
-      return Card.deleteOne(card)
+      return Card.remove()
         .then(() => res.send({ message: 'Карточка удалена' }));
     })
     .catch(next);

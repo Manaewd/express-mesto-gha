@@ -1,5 +1,3 @@
-/* eslint-disable func-names */
-/* eslint-disable linebreak-style */
 const mongoose = require('mongoose');
 const validator = require('validator');
 
@@ -40,7 +38,7 @@ const userSchema = new mongoose.Schema({
   },
 }, { versionKey: false });
 
-userSchema.methods.toJSON = function () {
+userSchema.methods.toJSON = function toJSON() {
   const user = this.toObject();
   delete user.password;
 

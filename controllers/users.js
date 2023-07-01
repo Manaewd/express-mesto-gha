@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 const bcrypt = require('bcryptjs');
 const jsonWebToken = require('jsonwebtoken');
 const User = require('../models/user');
@@ -26,12 +25,17 @@ const getUserInfo = (req, res, next) => {
 const getUserById = (req, res, next) => {
   User.findById(req.params.userId || req.user._id)
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь с указанным _id не найден');
-      }
-      return res.status(200).send({ data: user })
+      res.status(200).send({ data: user });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.message === 'User not found') {
+        next(new NotFoundError('Пользователь не найден'));
+      } else if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const createUser = (req, res, next) => {
@@ -73,8 +77,9 @@ const updateUserProfile = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Некорректные данные при обновлении'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -104,9 +109,8 @@ const updateUserAvatar = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
-  User.findOne({ email })
-    .select('+password')
-    .orFail(() => new Error('User not found'))
+  User.findOne({ email }).select('+password')
+    .orFail(new Error('User not found'))
     .then((user) => {
       bcrypt.compare(String(password), user.password)
         .then((isValidUser) => {
@@ -132,8 +136,9 @@ const login = (req, res, next) => {
         next(new AuthError('Ошибка авторизации'));
       } else if (err.name === 'ValidationError') {
         next(new BadRequestError('Некорректные данные введены'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
